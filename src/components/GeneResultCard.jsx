@@ -1,14 +1,21 @@
-const PLACEHOLDER_RESULT = "TT";
-const PLACEHOLDER_RECOMMENDATION =
-  "Placeholder recommendation: follow a consistent sleep routine, use regular movement and discuss personalised support with a qualified healthcare professional.";
+import { getGeneOutcome } from "../utils/geneticResults";
+
+const STATUS_STYLES = {
+  green: { background: "#a8e8c7", text: "#075b3c" },
+  yellow: { background: "#f0eb91", text: "#6b5f00" },
+  red: { background: "#e9a0ad", text: "#850016" },
+  unavailable: { background: "#e7e4e9", text: "#5f5865" },
+};
 
 const getSnps = (gene) => {
   if (Array.isArray(gene?.snps) && gene.snps.length > 0) return gene.snps;
   return [{ "Key SNPs": gene?.["Key SNPs"] }];
 };
 
-const GeneResultCard = ({ gene, accentColor = "#006e5e" }) => {
+const GeneResultCard = ({ gene, result, accentColor = "#006e5e" }) => {
   const snps = getSnps(gene);
+  const { outcomes, status, recommendations } = getGeneOutcome(snps, result);
+  const statusStyle = STATUS_STYLES[status];
   const relevance = gene?.["Function / ADHD Relevance"] ?? gene?.Function ?? "—";
   const explanation =
     gene?.["Generic Explanation (Lay-readable, ADHD-specific)"] ??
@@ -31,20 +38,24 @@ const GeneResultCard = ({ gene, accentColor = "#006e5e" }) => {
         <div className="grid grid-cols-[76px_178px_1fr_158px] items-stretch text-[11px] text-[#1e1e20]">
           <div className="flex items-center border-r border-[#e6e2e9] px-3 font-bold">{gene?.Gene ?? "—"}</div>
           <div className="border-r border-[#e6e2e9]">
-            {snps.map((snp, index) => (
+            {outcomes.map((outcome, index) => (
               <div
-                key={`${snp?.["Key SNPs"] ?? index}`}
-                className={`px-3 py-2 text-center ${index < snps.length - 1 ? "border-b border-[#e6e2e9]" : ""}`}
+                key={`${outcome.key}-${index}`}
+                className={`px-3 py-2 text-center ${index < outcomes.length - 1 ? "border-b border-[#e6e2e9]" : ""}`}
               >
-                {snp?.["Key SNPs"] ?? "—"}
+                {outcome.label}
               </div>
             ))}
           </div>
           <div className="flex items-center border-r border-[#e6e2e9] px-2 py-1 text-center leading-relaxed">{relevance}</div>
           <div className="flex flex-col justify-around gap-2 px-3 py-2">
-            {snps.map((snp, index) => (
-              <span key={`${snp?.["Key SNPs"] ?? index}-result`} className="rounded-full bg-[#e9a0ad] px-3 py-1 text-center font-semibold text-[#850016]">
-                {PLACEHOLDER_RESULT}
+          {outcomes.map((outcome, index) => (
+            <span
+              key={`${outcome.key}-${index}-result`}
+              className="rounded-full px-3 py-1 text-center font-semibold"
+              style={{ backgroundColor: STATUS_STYLES[outcome.status].background, color: STATUS_STYLES[outcome.status].text }}
+            >
+              {outcome.genotype}
               </span>
             ))}
           </div>
@@ -54,8 +65,12 @@ const GeneResultCard = ({ gene, accentColor = "#006e5e" }) => {
       </div>
 
       <div className="mt-6 overflow-hidden rounded-[14px] bg-white shadow-[0_4px_10px_rgba(0,0,0,0.10)]">
-        <h3 className="bg-[#e9a0ad] px-4 py-3 text-center text-[14px] font-bold text-[#17151a]">Recommendation / Explanation</h3>
-        <p className="px-5 py-4 text-center text-[11px] leading-relaxed text-[#850016]">{PLACEHOLDER_RECOMMENDATION}</p>
+        <h3 className="px-4 py-3 text-center text-[14px] font-bold text-[#17151a]" style={{ backgroundColor: statusStyle.background }}>
+          Recommendation / Explanation
+        </h3>
+        <div className="px-5 py-4 text-center text-[11px] leading-relaxed" style={{ color: statusStyle.text }}>
+          {recommendations.map((recommendation, index) => <p key={`${recommendation}-${index}`}>{recommendation}</p>)}
+        </div>
       </div>
     </article>
   );

@@ -6,11 +6,12 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 
 const Page3 = () => {
-  const { style, dnaCategories, kitid } = useContext(GlobalDataContext);
+  const { style, dnaCategories, kitid, result } = useContext(GlobalDataContext);
+    console.log("Page3 - style:", style);
   const sections = getSections(dnaCategories);
   const primaryColor = style?.primaryColor ?? "#006e5e";
   const secondaryColor = style?.secondaryColor ?? "#006e5e";
-  const headerBg = style?.secondaryColor ? `${style.secondaryColor}1A` : "rgba(0,110,94,0.15)";
+  const headerBg = style?.secondaryColor ? `${style.primaryColor}1A` : "rgba(0,110,94,0.15)";
   const totalPages = 2 + sections.reduce(
     (total, section) => total + Math.max(1, Math.ceil(getCollection(section).length / 2)),
     0,
@@ -34,7 +35,7 @@ const Page3 = () => {
             style={{ fontFamily: "Poppins, sans-serif" }}
           >
             <div className="absolute inset-x-0 top-0 z-20">
-              <Header section={`Section ${sectionIndex + 1}`} logo={style?.imageBase64} color={secondaryColor} bg={headerBg} />
+              <Header section={`Section ${sectionIndex + 1}`} logo={style?.imageBase64} color={primaryColor} bg={headerBg} />
             </div>
 
             <header
@@ -50,7 +51,7 @@ const Page3 = () => {
 
             <div className="flex flex-col gap-2 mt-2">
               {genes.map((gene, geneIndex) => (
-                <GeneResultCard key={`${gene?.Gene ?? "gene"}-${geneIndex}`} gene={gene} accentColor={primaryColor} />
+                <GeneResultCard key={`${gene?.Gene ?? "gene"}-${geneIndex}`} gene={gene} result={result} accentColor={primaryColor} />
               ))}
             </div>
 

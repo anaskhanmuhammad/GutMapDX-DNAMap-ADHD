@@ -13,6 +13,9 @@ const getSnps = (gene) => {
 };
 
 const GeneResultCard = ({ gene, result, accentColor = "#006e5e" }) => {
+
+  console.log(result);
+
   const snps = getSnps(gene);
   const { outcomes, status, recommendations } = getGeneOutcome(snps, result);
   const statusStyle = STATUS_STYLES[status];
@@ -26,7 +29,7 @@ const GeneResultCard = ({ gene, result, accentColor = "#006e5e" }) => {
     <article className="rounded-[25px] border-2 border-[#d8cde8] bg-white p-[15px]">
       <div className="overflow-hidden rounded-[14px] bg-white shadow-[0_4px_10px_rgba(0,0,0,0.10)]">
         <div
-          className="grid grid-cols-[76px_178px_1fr_158px] items-center text-[14px] font-bold tracking-[0.04em]"
+          className="grid grid-cols-[76px_100px_1fr_120px] items-center text-[14px] font-bold tracking-[0.04em]"
           style={{ backgroundColor: `${accentColor}40`, color: accentColor }}
         >
           <div className="border-r border-[#9fbcb7] px-3 py-4">Gene</div>
@@ -35,7 +38,7 @@ const GeneResultCard = ({ gene, result, accentColor = "#006e5e" }) => {
           <div className="px-3 py-4 text-center">Result</div>
         </div>
 
-        <div className="grid grid-cols-[76px_178px_1fr_158px] items-stretch text-[11px] text-[#1e1e20]">
+        <div className="grid grid-cols-[76px_100px_1fr_120px] items-stretch text-[11px] text-[#1e1e20]">
           <div className="flex items-center border-r border-[#e6e2e9] px-3 font-bold">{gene?.Gene ?? "—"}</div>
           <div className="border-r border-[#e6e2e9]">
             {outcomes.map((outcome, index) => (
@@ -53,7 +56,7 @@ const GeneResultCard = ({ gene, result, accentColor = "#006e5e" }) => {
             <span
               key={`${outcome.key}-${index}-result`}
               className="rounded-full px-3 py-1 text-center font-semibold"
-              style={{ backgroundColor: STATUS_STYLES[outcome.status].background, color: STATUS_STYLES[outcome.status].text }}
+              style={{ backgroundColor: STATUS_STYLES[outcome.status].background }}
             >
               {outcome.genotype}
               </span>
@@ -68,7 +71,7 @@ const GeneResultCard = ({ gene, result, accentColor = "#006e5e" }) => {
         <h3 className="px-4 py-3 text-center text-[14px] font-bold text-[#17151a]" style={{ backgroundColor: statusStyle.background }}>
           Recommendation / Explanation
         </h3>
-        <div className="px-5 py-4 text-center text-[11px] leading-relaxed" style={{ color: statusStyle.text }}>
+        <div className="px-3 py-2 text-center text-[11px] leading-relaxed">
           {recommendations.map((recommendation, index) => <p key={`${recommendation}-${index}`}>{recommendation}</p>)}
         </div>
       </div>

@@ -57,6 +57,7 @@ const Page2 = () => {
                     tags={Array.isArray(section.collection) ? section.collection.map((item) => item?.Gene).filter(Boolean) : []}
                     pageRange={`${String(firstPage).padStart(2, "0")}-${String(lastPage).padStart(2, "0")} PAGES`}
                     accentColor={secondaryColor}
+                    primaryColor={primaryColor}
                   />;
                 })}
               </div>

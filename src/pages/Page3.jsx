@@ -49,9 +49,9 @@ const Page3 = () => {
               </h1>
             </header>
 
-            <div className="flex flex-col gap-2 mt-2">
+            <div className="flex flex-col gap-5 mt-2">
               {genes.map((gene, geneIndex) => (
-                <GeneResultCard key={`${gene?.Gene ?? "gene"}-${geneIndex}`} gene={gene} result={result} accentColor={primaryColor} />
+                <GeneResultCard key={`${gene?.Gene ?? "gene"}-${geneIndex}`} gene={gene} result={result.slice(-1)} accentColor={primaryColor} />
               ))}
             </div>
 

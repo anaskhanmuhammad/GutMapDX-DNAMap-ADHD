@@ -1,6 +1,8 @@
 import React from "react";
 import { GlobalDataContext } from "../context/GlobalDataContext";
 import { useContext } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 
 
 const KitIdIcon = () => (
@@ -27,6 +29,89 @@ const TitlePage = () => {
     : `rgba(0, 0, 0, 0.05)`;
   const header = style?.header;
 
+
+
+  const isPrint = new URLSearchParams(window.location.search).get("print") === "1";
+
+  const [loading, setLoading] = useState(false);
+  const [percentage, setPercentage] = useState(0);
+  const percentageRef = useRef(0);
+
+  const { id } = useParams();
+
+
+  useEffect(() => {
+    if (!isPrint) {
+      document.body.classList.remove("print-mode");
+      window.__REPORT_READY__ = false;
+      return;
+    }
+
+    document.body.classList.add("print-mode");
+    return () => document.body.classList.remove("print-mode");
+  }, [isPrint]);
+
+  useEffect(() => {
+    if (!isPrint) return;
+
+    const container = document.getElementById("report-container");
+    if (!container) return;
+
+    // Signal to Puppeteer that the report DOM is ready for PDF capture.
+    window.__REPORT_READY__ = false;
+    requestAnimationFrame(() => {
+      window.__REPORT_READY__ = true;
+    });
+  }, [isPrint]);
+
+    const downloadpdf = async (Kittype) => {
+    try {
+      setPercentage(10);
+      percentageRef.current = 10;
+
+      const interval = setInterval(() => {
+        setPercentage((prev) => {
+          if (prev >= 83) {
+            return prev;
+          } 
+          return prev + 3;
+        });
+      }, 150);
+
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/report/${id}/download`,
+      );
+      if (!response.ok) {
+        throw new Error(`Download failed: ${response.status}`);
+      }
+
+      setPercentage(90);
+      percentageRef.current = 90;
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `Gut-Thyroid-Function-Test-Report.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+
+      setPercentage(100);
+      percentageRef.current = 100;
+      await new Promise((resolve) => setTimeout(resolve, 200));
+    } catch (err) {
+      console.error("Server PDF download failed:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+
+
   return (
     <>
       <div className="flex items-center justify-center bg-gray-100 w-[210mm] h-[297mm]">
@@ -45,7 +130,7 @@ const TitlePage = () => {
 
           <div
             className="absolute inset-0"
-            style={{ backgroundColor: secondaryFivePercent }}
+            // style={{ backgroundColor: secondaryFivePercent }}
           />
 
           <section className="absolute left-[8.5%] top-[50.2%] w-[49%] z-10 flex flex-col gap-2 ">
@@ -116,6 +201,41 @@ const TitlePage = () => {
                   </div>
                 </div>
               </div>
+
+          {!loading ? (
+            <button
+              className="print:hidden text-white"
+              disabled={loading}
+              onClick={async () => {
+                setLoading(true);
+                await downloadpdf();
+                setLoading(false);
+              }}
+              style={{ backgroundColor: primaryColor }}
+            >
+              Download
+            </button>
+          ) : (
+            <div className="mt-3 flex flex-col gap-2 text-base font-medium text-[#001342] print:hidden">
+              <div className="text-base font-medium text-[#001342]">
+                Downloading...
+              </div>
+
+              <div className="relative h-10 w-full overflow-hidden rounded-md bg-[#f0f0f0]">
+                <div
+                  className="flex h-full items-center justify-end pr-3 transition-[width] duration-300 ease-in-out"
+                  style={{
+                    width: `${percentage}%`,
+                    backgroundColor: primaryColor,
+                  }}
+                />
+              </div>
+
+              <div className="text-right text-sm font-semibold text-[#001342]">
+                {percentage}%
+              </div>
+            </div>
+          )}
 
 
             </div>

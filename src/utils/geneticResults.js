@@ -67,9 +67,22 @@ export const getSnpOutcome = (snp, geneticResultIndex) => {
   };
 };
 
-export const getGeneOutcome = (snps, result) => {
+export const getGeneOutcome = (snps, result, scoring) => {
   const resultIndex = getGeneticResultIndex(result);
   const outcomes = snps.map((snp) => getSnpOutcome(snp, resultIndex));
+  const primarySnpId = getRsIds(scoring?.primarySNP ?? scoring?.primarySnp)[0];
+  const primaryOutcome = primarySnpId
+    ? outcomes.find((outcome) => outcome.key === primarySnpId)
+    : undefined;
+
+  if (primaryOutcome) {
+    return {
+      outcomes,
+      status: primaryOutcome.status,
+      recommendations: primaryOutcome.recommendation ? [primaryOutcome.recommendation] : [],
+    };
+  }
+
   const status = STATUS_ORDER.find((candidate) => outcomes.some((outcome) => outcome.status === candidate)) ?? "unavailable";
   const recommendations = [...new Set(outcomes.map((outcome) => outcome.recommendation).filter(Boolean))];
 

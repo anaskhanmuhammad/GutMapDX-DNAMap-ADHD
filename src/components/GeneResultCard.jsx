@@ -17,7 +17,7 @@ const GeneResultCard = ({ gene, result, accentColor = "#006e5e" }) => {
   console.log(result);
 
   const snps = getSnps(gene);
-  const { outcomes, status, recommendations } = getGeneOutcome(snps, result);
+  const { outcomes, status, recommendations } = getGeneOutcome(snps, result, gene?.scoring);
   const statusStyle = STATUS_STYLES[status];
   const relevance = gene?.["Function / ADHD Relevance"] ?? gene?.Function ?? "—";
   const explanation =
@@ -67,7 +67,7 @@ const GeneResultCard = ({ gene, result, accentColor = "#006e5e" }) => {
         <p className="border-t border-[#e6e2e9] px-2 py-2 text-center text-[11px] leading-relaxed text-[#25232a]">{explanation}</p>
       </div>
 
-      <div className="mt-6 overflow-hidden rounded-[14px] bg-white shadow-[0_4px_10px_rgba(0,0,0,0.10)]">
+      <div className="mt-3 overflow-hidden rounded-[14px] bg-white shadow-[0_4px_10px_rgba(0,0,0,0.10)]">
         <h3 className="px-4 py-3 text-center text-[14px] font-bold text-[#17151a]" style={{ backgroundColor: statusStyle.background }}>
           Recommendation / Explanation
         </h3>

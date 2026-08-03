@@ -18,7 +18,7 @@ const KitIdIcon = () => (
 );
 
 const TitlePage = () => {
-  const { style, patientName, kitid, SampleDate } =
+  const { style, patientName, kitid, SampleDate, Kittype } =
     useContext(GlobalDataContext);
   console.log(kitid);
 
@@ -153,7 +153,7 @@ const TitlePage = () => {
 
             <div>
               <h2 className="text-[22px] font-bold w-fit py-0 px-5 rounded-full" style={{ backgroundColor: primaryColor, color: "#ffffff" }}>
-                ADHD
+                {Kittype ? Kittype.slice(4) : ""}
               </h2>
             </div>
 

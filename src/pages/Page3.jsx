@@ -6,7 +6,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 
 const Page3 = () => {
-  const { style, dnaCategories, kitid, result } = useContext(GlobalDataContext);
+  const { style, dnaCategories, kitid, result, Kittype } = useContext(GlobalDataContext);
     console.log("Page3 - style:", style);
   const sections = getSections(dnaCategories);
   const primaryColor = style?.primaryColor ?? "#006e5e";
@@ -35,7 +35,7 @@ const Page3 = () => {
             style={{ fontFamily: "Poppins, sans-serif" }}
           >
             <div className="absolute inset-x-0 top-0 z-20">
-              <Header section={`Section ${sectionIndex + 1}`} logo={style?.imageBase64} color={primaryColor} bg={headerBg} />
+              <Header section={`Section ${sectionIndex + 1}`} logo={style?.imageBase64} color={primaryColor} bg={headerBg} title={Kittype} />
             </div>
 
             <header

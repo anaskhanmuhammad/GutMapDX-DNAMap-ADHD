@@ -2,7 +2,7 @@ import { getGeneOutcome } from "../utils/geneticResults";
 
 const STATUS_STYLES = {
   green: { background: "#a8e8c7", text: "#075b3c" },
-  yellow: { background: "#f0eb91", text: "#6b5f00" },
+  amber: { background: "#f0eb91", text: "#6b5f00" },
   red: { background: "#e9a0ad", text: "#850016" },
   unavailable: { background: "#e7e4e9", text: "#5f5865" },
 };
@@ -14,7 +14,7 @@ const getSnps = (gene) => {
 
 const GeneResultCard = ({ gene, result, accentColor = "#006e5e" }) => {
 
-  console.log(result);
+  // console.log(result);
 
   const snps = getSnps(gene);
   const { outcomes, status, recommendations } = getGeneOutcome(snps, result, gene?.scoring);

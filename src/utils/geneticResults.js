@@ -1,4 +1,4 @@
-const STATUS_ORDER = ["red", "yellow", "green"];
+const STATUS_ORDER = ["red", "amber", "green"];
 
 const getRsIds = (value) => String(value ?? "").toLowerCase().match(/rs\d+/g) ?? [];
 
@@ -32,7 +32,7 @@ export const getGeneticResultIndex = (result) => {
 const getRuleForGenotype = (snp, genotype) => {
   const ruleSets = [
     { status: "red", rule: snp?.isRed },
-    { status: "yellow", rule: snp?.isYellow ?? snp?.isAmber },
+    { status: "amber", rule: snp?.isAmber },
     { status: "green", rule: snp?.isGreen },
   ];
 
@@ -49,13 +49,14 @@ const getRuleForGenotype = (snp, genotype) => {
 
 export const getSnpOutcome = (snp, geneticResultIndex) => {
   const rsId = getRsIds(snp?.["Key SNPs"])[0];
+  // console.log(snp?.["Key SNPs"], rsId);
+  // console.log("RS ID", rsId);
   const rawResult = rsId ? geneticResultIndex.get(rsId) : undefined;
   const genotype = rawResult?.genotype ?? "";
   const matchedRule = genotype ? getRuleForGenotype(snp, genotype) : undefined;
   const displayResult = matchedRule
     ? getValueByPattern(matchedRule.rule, /display result/i) || genotype
     : genotype;
-
   return {
     key: rsId ?? snp?.["Key SNPs"] ?? "unknown-snp",
     label: snp?.["Key SNPs"] ?? "—",
